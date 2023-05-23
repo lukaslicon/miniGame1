@@ -10,42 +10,13 @@ class miniGame extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         this.player.body.setCollideWorldBounds(true); //player cannot go out of bounds
 
-        //sprites
-        const sprite = this.physics.add.image(400, 300, 'ball')
-            .setVelocity(288, 300)
-            .setBounce(1, 1.08)
-            .setCollideWorldBounds(true)
-            .setGravityY(100);
-
-        const sprite2 = this.physics.add.image(400, 300, 'ball')
-            .setVelocity(400, 400)
-            .setBounce(1, 1.02)
-            .setCollideWorldBounds(true)
-            .setGravityY(100);
-        
-        sprite.body.onCollide = true;
-        sprite.body.setCircle(48);
-        sprite2.body.onCollide = true;
-        sprite2.body.setCircle(48);
-
-        //this.physics.add.collider(this.sprite2, this.group);
-
         this.coins = this.physics.add.group({ immovable: true });
         const outer = new Phaser.Geom.Rectangle(50, 50, 1800, 1200);
         const inner = new Phaser.Geom.Rectangle(800, 300, 500, 200);
-        for (let i = 0; i < 60; i++)
-        {
-            const point = Phaser.Geom.Rectangle.RandomOutside(outer, inner);
-            const coins = this.coins.create(point.x, point.y, 'coin');
-            this.physics.add.existing(coins);
-            coins.body.setImmovable();
-        }
+
         //controls
         this.add.text(50, 50, "Movement: Arrow Keys\n\nDont get hit!").setFontSize(30)
 
-        this.physics.add.collider(this.player, [sprite, sprite2], () => {
-            this.scene.start('summary1');
-        });
 
     }
     update ()
@@ -68,12 +39,6 @@ class miniGame extends Phaser.Scene {
         {
             this.player.body.setVelocityY(300);
         }
-
-        this.physics.overlap(this.player, this.coins, (player, coins) =>
-        {
-            coins.destroy();
-            game1points++;
-        });
         }
     }
 
