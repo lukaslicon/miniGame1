@@ -98,7 +98,7 @@ class summary1 extends Phaser.Scene {
         this.add.text(1075, 360, game1points).setFontSize(30)
         this.add.text(825, 300, "Game 1 score:\n\nTOTAL Score:\n\n",).setFontSize(30) 
             this.input.on('pointerdown', () => {
-                this.scene.start('game2')
+                this.scene.start('miniGame')
     });
     }
 }
