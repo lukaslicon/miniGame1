@@ -16,7 +16,7 @@ class intro extends Phaser.Scene {
         this.add.text(725,850, "Click anywhere to begin.").setFontSize(30).setFill('#f0000f');
         this.input.on('pointerdown', () => {
             this.cameras.main.fade(1000, 0,0,0);
-            this.time.delayedCall(1000, () => this.scene.start('scene1'));
+            this.time.delayedCall(1000, () => this.scene.start('MiniGame'));
         });
     }
 }

@@ -10,7 +10,7 @@ let config = {
             debugShowVelocity: false
     }
 },
-scene: [load, intro, scene1],
+scene: [load, intro, MiniGame],
 title: "Physics Based Games",
 };
 
