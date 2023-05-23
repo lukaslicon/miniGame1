@@ -1,3 +1,5 @@
+game1points = 0;
+totalpoints = 0;
 class Load extends Phaser.Scene {
     constructor(){
         super('Load');
