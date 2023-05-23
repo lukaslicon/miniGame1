@@ -1,6 +1,15 @@
-class miniGame extends Phaser.Scene {
+gamePoints = 0;
+class Game extends Phaser.Scene {
     constructor(){
-        super('miniGame');
+        super('Game');
+    }
+    preload ()
+    {
+        this.load.path = 'assets/';
+        this.load.image('coin', 'images/coin.png');
+        this.load.image('bob', 'images/bob.png');
+        this.load.image('background1', 'images/game1background.png');
+        this.load.image('summaryScreen', 'images/summaryscreen.png');
     }
     create()
     {
@@ -43,9 +52,9 @@ class miniGame extends Phaser.Scene {
     }
 
     
-class summary1 extends Phaser.Scene {
+class summary extends Phaser.Scene {
     constructor() {
-        super('summary1');
+        super('summary');
     }
     create(){
         this.add.image(960,540 , 'summaryScreen');
@@ -59,11 +68,27 @@ class summary1 extends Phaser.Scene {
             yoyo: true,
             repeat: -1
         });
-        this.add.text(1075, 300, game1points).setFontSize(30)
-        this.add.text(1075, 360, game1points).setFontSize(30)
+        this.add.text(1075, 300, gamePoints).setFontSize(30)
+        this.add.text(1075, 360, gamePoints).setFontSize(30)
         this.add.text(825, 300, "Game 1 score:\n\nTOTAL Score:\n\n",).setFontSize(30) 
             this.input.on('pointerdown', () => {
-                this.scene.start('miniGame')
+                this.scene.start('Game')
     });
     }
 }
+
+let config = {
+    type: Phaser.AUTO,
+    width: 1920,
+    height: 1080,
+    backgroundColor: 0x000000,
+    physics:{
+        default: 'arcade',
+        arcade: {
+            debug: true,
+            debugShowVelocity: false
+    }
+},
+scene: [Game, summary],
+title: "Game",
+};
