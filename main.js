@@ -15,3 +15,7 @@ title: "Physics Based Games",
 };
 
 let game = new Phaser.Game(config);
+
+let gameOptions = {
+    initialTime: 60
+}
