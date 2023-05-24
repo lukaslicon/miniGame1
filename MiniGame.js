@@ -63,11 +63,11 @@ class MiniGame extends Phaser.Scene {
         this.gameTimer = this.time.addEvent({
             delay: 1000,
             callback: function(){
-                this.timeLeft = this.timeLeft - 1000;
+                this.timeLeft = this.timeLeft - 1;
                 //bar width divided by the number of seconds moves bar
                 let stepWidth = this.timerMask.displayWidth / gameOptions.initialTime*1;
                 this.timerMask.x -=  stepWidth;
-                if(this.timeLeft == 0){
+                if(this.timeLeft <= 0){
                     this.timeLeft = 60;
                     this.cameras.main.fadeOut(1000, 0, 0, 0)
                     this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
