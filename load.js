@@ -9,6 +9,7 @@ class load extends Phaser.Scene {
         this.load.image('bob', 'bob.png');
         this.load.image('boundary', 'boundary.png');
         this.load.image("timerBar", "timerBar.png");
+        this.load.image("boarder", "boarder.png");
 
     }
     create()

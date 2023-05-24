@@ -1,10 +1,12 @@
 
-playerVelocity = 4000;
+playerVelocity = 3000;
 
 
 class MiniGame extends Phaser.Scene {
     constructor() {
         super('MiniGame')
+        this.shadedRectangle = null; // Reference to the currently shaded rectangle
+
     }
     create()
     {
@@ -61,10 +63,10 @@ class MiniGame extends Phaser.Scene {
         this.gameTimer = this.time.addEvent({
             delay: 1000,
             callback: function(){
-                this.timeLeft = this.timeLeft - 10;
+                this.timeLeft = this.timeLeft - 1000;
                 //bar width divided by the number of seconds moves bar
-                let stepWidth = this.timerMask.displayWidth / gameOptions.initialTime*10;
-                this.timerMask.x -= stepWidth;
+                let stepWidth = this.timerMask.displayWidth / gameOptions.initialTime*1;
+                this.timerMask.x -=  stepWidth;
                 if(this.timeLeft == 0){
                     this.timeLeft = 60;
                     this.cameras.main.fadeOut(1000, 0, 0, 0)
@@ -78,11 +80,23 @@ class MiniGame extends Phaser.Scene {
         });
         // Change alpha of a random rectangle in group1 every 5 seconds
         this.time.addEvent({
-            delay: 2000,
+            delay: 3000,
             callback: function() {
-                const randomIndex = Phaser.Math.Between(0, this.group1.getLength() - 1);
-                const randomRectangle = this.group1.getChildren()[randomIndex];
-                randomRectangle.setAlpha(0.5);
+
+                if (this.shadedRectangle !== null) {
+                    this.shadedRectangle.setAlpha(1);
+                    this.shadedRectangle.isShaded = false;
+                    this.physics.world.enableBody(this.shadedRectangle);
+                }
+               // Choose a new rectangle to shade
+               let shadedRectangles = this.group1.getChildren().filter(rectangle => !rectangle.isShaded);
+               if(shadedRectangles.length > 0) {
+                   const randomIndex = Phaser.Math.Between(0, shadedRectangles.length - 1);
+                   this.shadedRectangle = shadedRectangles[randomIndex];
+                   this.shadedRectangle.setAlpha(0.5);
+                   this.shadedRectangle.isShaded = true;
+                   this.physics.world.disableBody(this.shadedRectangle);
+               }
             },
             callbackScope: this,
             loop: true
@@ -108,6 +122,7 @@ class MiniGame extends Phaser.Scene {
         {
             this.player.body.setVelocityY(playerVelocity);
         }
+
         }
     }
 
