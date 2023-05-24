@@ -6,6 +6,7 @@ class MiniGame extends Phaser.Scene {
     create()
     {
         this.add.image(960, 540, 'background1');
+        
         //player rectangle
         this.player = this.physics.add.image(400, 300, 'bob').setScale(.75);
         this.cursors = this.input.keyboard.createCursorKeys();
