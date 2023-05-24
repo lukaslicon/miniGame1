@@ -1,5 +1,5 @@
 
-playerVelocity = 2000;
+playerVelocity = 4000;
 
 
 class MiniGame extends Phaser.Scene {
@@ -20,7 +20,6 @@ class MiniGame extends Phaser.Scene {
             down:Phaser.Input.Keyboard.KeyCodes.S,
             left:Phaser.Input.Keyboard.KeyCodes.A,
             right:Phaser.Input.Keyboard.KeyCodes.D});
-
 
         //  boundaries/goals
         this.group1 = this.physics.add.group({
@@ -79,15 +78,14 @@ class MiniGame extends Phaser.Scene {
         });
         // Change alpha of a random rectangle in group1 every 5 seconds
         this.time.addEvent({
-    
+            delay: 2000,
             callback: function() {
                 const randomIndex = Phaser.Math.Between(0, this.group1.getLength() - 1);
                 const randomRectangle = this.group1.getChildren()[randomIndex];
                 randomRectangle.setAlpha(0.5);
             },
-                callbackScope: this,
-                delay: 2000,
-                loop: true
+            callbackScope: this,
+            loop: true
         });
     }
 
