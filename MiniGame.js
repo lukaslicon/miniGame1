@@ -1,5 +1,5 @@
 
-playerVelocity = 3000;
+playerVelocity = 2500;
 
 
 class MiniGame extends Phaser.Scene {
@@ -29,26 +29,93 @@ class MiniGame extends Phaser.Scene {
             frameQuantity: 50,
             immovable: true
         });
+        //inside collision
         this.group2 = this.physics.add.group({
             key: 'bob',
             frameQuantity: 50,
         });
-        
+        //bottom
+        this.bottomSide = this.physics.add.group({
+            key: 'boarder',
+            frameQuantity: 16,
+            immovable: true
+
+        });
+        //top
+        this.topSide = this.physics.add.group({
+            key: 'boarder',
+            frameQuantity: 16,
+            immovable: true
+
+        });
+        //left
+        this.leftSide = this.physics.add.group({
+            key: 'side',
+            frameQuantity: 9,
+            immovable: true
+
+        });
+        //right
+        this.rightSide = this.physics.add.group({
+            key: 'side',
+            frameQuantity: 9,
+            immovable: true
+
+        });
+        //outer rectangle placing
         Phaser.Actions.PlaceOnRectangle(
             this.group1.getChildren(), 
             new Phaser.Geom.Rectangle(0, 0, 1920, 1080)
             );
+        //inside collision placing
         Phaser.Actions.PlaceOnRectangle(
-                this.group2.getChildren(), 
-                new Phaser.Geom.Rectangle(0, 0, 1920, 1080)
-                );
+            this.group2.getChildren(), 
+            new Phaser.Geom.Rectangle(0, 0, 1920, 1080)
+            );
 
+        //line placements
+        const topLine = new Phaser.Geom.Line(60, 0, 1980, 0);
+        const bottomLine = new Phaser.Geom.Line(60, 1080, 1980, 1080);
+        const leftLine = new Phaser.Geom.Line(0, 60, 0, 1140);
+        const rightLine = new Phaser.Geom.Line(1920, 60, 1920, 1140);
+        
+        //place lines
+        Phaser.Actions.PlaceOnLine(
+                this.topSide.getChildren(),
+                topLine
+            );
+        Phaser.Actions.PlaceOnLine(
+                this.bottomSide.getChildren(),
+                bottomLine
+            );   
+        Phaser.Actions.PlaceOnLine(
+                this.leftSide.getChildren(),
+                leftLine
+            );  
+        Phaser.Actions.PlaceOnLine(
+                this.rightSide.getChildren(),
+                rightLine
+            );           
+
+        //collisions for each group
         this.group1.getChildren().forEach(rectangle => {
             this.physics.add.collider(this.player, rectangle);
         });       
         this.group2.getChildren().forEach(rectangle => {
             this.physics.add.collider(this.player, rectangle);
-        });               
+        });        
+        this.bottomSide.getChildren().forEach(rectangle => {
+            this.physics.add.collider(this.player, rectangle);
+        });       
+        this.topSide.getChildren().forEach(rectangle => {
+            this.physics.add.collider(this.player, rectangle);
+        });    
+        this.leftSide.getChildren().forEach(rectangle => {
+            this.physics.add.collider(this.player, rectangle);
+        });       
+        this.rightSide.getChildren().forEach(rectangle => {
+            this.physics.add.collider(this.player, rectangle);
+        });           
         
         //  controls
         this.add.text(50, 50, "Movement:").setFontSize(30);
@@ -101,28 +168,54 @@ class MiniGame extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+
+            // Collision check for shaded rectangle
+            this.physics.add.collider(this.player, this.group1, this.checkCollision, null, this);
+
+
+    }
+
+    checkCollision(player, rectangle) {
+        if (rectangle.isShaded) {
+            player.setPosition(960, 590); // Move player back to the middle
+            // Freeze player for 2 seconds
+            this.physics.pause();
+            setTimeout(() => {
+                this.physics.resume();
+            }, 2000);
+
+            // Unshade the rectangle
+            rectangle.setAlpha(1);
+            rectangle.isShaded = false;
+            this.physics.world.enableBody(rectangle);
+
+            this.timeLeft -= 5; // Increase by 5 seconds
+            let stepWidth = this.timerMask.displayWidth / gameOptions.initialTime;
+            this.timerMask.x -=  stepWidth * 5; // Increase the bar width
+        }
     }
 
     update ()
     {
-        this.player.body.setVelocity(0);
-        if (this.cursors.left.isDown)
-        {
-            this.player.body.setVelocityX(-playerVelocity);
-        }
-        else if (this.cursors.right.isDown)
-        {
-            this.player.body.setVelocityX(playerVelocity);
-        }
-        if (this.cursors.up.isDown)
-        {
-            this.player.body.setVelocityY(-playerVelocity);
-        }
-        else if (this.cursors.down.isDown)
-        {
-            this.player.body.setVelocityY(playerVelocity);
-        }
-
+        if (!this.playerFrozen) {
+            this.player.body.setVelocity(0);
+            if (this.cursors.left.isDown)
+            {
+                this.player.body.setVelocityX(-playerVelocity);
+            }
+            else if (this.cursors.right.isDown)
+            {
+                this.player.body.setVelocityX(playerVelocity);
+            }
+            if (this.cursors.up.isDown)
+            {
+                this.player.body.setVelocityY(-playerVelocity);
+            }
+            else if (this.cursors.down.isDown)
+            {
+                this.player.body.setVelocityY(playerVelocity);
+            }
         }
     }
 
+}
