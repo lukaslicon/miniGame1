@@ -11,11 +11,7 @@ let config = {
     }
 },
 scene: [load, intro, MiniGame],
-title: "Physics Based Games",
+title: "Mini Game Prototype",
 };
 
 let game = new Phaser.Game(config);
-
-let gameOptions = {
-    initialTime: 60
-}

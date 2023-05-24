@@ -1,4 +1,6 @@
 playerVelocity = 2000;
+
+
 class MiniGame extends Phaser.Scene {
     constructor() {
         super('MiniGame')
@@ -38,7 +40,7 @@ class MiniGame extends Phaser.Scene {
                 new Phaser.Geom.Rectangle(0, 0, 1920, 1080)
                 );
         
-        //
+        //  
         this.physics.add.collider(this.player, this.group1);
         this.physics.add.collider(this.player, this.group2);
         
@@ -47,27 +49,31 @@ class MiniGame extends Phaser.Scene {
         this.add.text(225, 35, "  W").setFontSize(25);
         this.add.text(225, 65, "A S D").setFontSize(25);
 
-        //  the energy bar
-        let timer = this.add.sprite(game.config.width / 2, game.config.height / 4.5, "timerBar");
-        this.energyMask = this.add.sprite(timer.x, timer.y, "timerBar");
-        this.energyMask.visible = false;
-        timer.mask = new Phaser.Display.Masks.BitmapMask(this, this.energyMask);
+        //  timer
+        let timer = this.add.sprite(game.config.width / 2, game.config.height / 6, "timerBar");
+        this.timerMask = this.add.sprite(timer.x, timer.y, "timerBar");
+        this.timerMask.visible = false;
+        timer.mask = new Phaser.Display.Masks.BitmapMask(this, this.timerMask);
         this.gameTimer = this.time.addEvent({
             delay: 1000,
             callback: function(){
-                this.timeLeft --;
- 
+                this.timeLeft = this.timeLeft - 30;
                 //bar width divided by the number of seconds moves bar
-                let stepWidth = this.energyMask.displayWidth / gameOptions.initialTime;
-                this.energyMask.x -= stepWidth;
+                let stepWidth = this.timerMask.displayWidth / gameOptions.initialTime*30;
+                this.timerMask.x -= stepWidth;
                 if(this.timeLeft == 0){
-                    this.scene.start("PlayGame")
+                    this.timeLeft = 60;
+                    this.cameras.main.fadeOut(1000, 0, 0, 0)
+                    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
+                        this.scene.start('intro')
+                    })
                 }
             },
             callbackScope: this,
             loop: true
         });
     }
+
     update ()
     {
         

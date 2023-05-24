@@ -16,3 +16,7 @@ class load extends Phaser.Scene {
         this.scene.start('MiniGame');
     }
 }
+
+let gameOptions = {
+    initialTime: 60
+}
