@@ -1,3 +1,4 @@
+
 playerVelocity = 2000;
 
 
@@ -22,13 +23,14 @@ class MiniGame extends Phaser.Scene {
 
 
         //  boundaries/goals
-        this.group1 = this.physics.add.staticGroup({
+        this.group1 = this.physics.add.group({
             key: 'boundary',
-            frameQuantity: 50
+            frameQuantity: 50,
+            immovable: true
         });
-        this.group2 = this.physics.add.staticGroup({
+        this.group2 = this.physics.add.group({
             key: 'bob',
-            frameQuantity: 50
+            frameQuantity: 50,
         });
         
         Phaser.Actions.PlaceOnRectangle(
@@ -39,10 +41,13 @@ class MiniGame extends Phaser.Scene {
                 this.group2.getChildren(), 
                 new Phaser.Geom.Rectangle(0, 0, 1920, 1080)
                 );
-        
-        //  
-        this.physics.add.collider(this.player, this.group1);
-        this.physics.add.collider(this.player, this.group2);
+
+        this.group1.getChildren().forEach(rectangle => {
+            this.physics.add.collider(this.player, rectangle);
+        });       
+        this.group2.getChildren().forEach(rectangle => {
+            this.physics.add.collider(this.player, rectangle);
+        });               
         
         //  controls
         this.add.text(50, 50, "Movement:").setFontSize(30);
@@ -57,9 +62,9 @@ class MiniGame extends Phaser.Scene {
         this.gameTimer = this.time.addEvent({
             delay: 1000,
             callback: function(){
-                this.timeLeft = this.timeLeft - 30;
+                this.timeLeft = this.timeLeft - 10;
                 //bar width divided by the number of seconds moves bar
-                let stepWidth = this.timerMask.displayWidth / gameOptions.initialTime*30;
+                let stepWidth = this.timerMask.displayWidth / gameOptions.initialTime*10;
                 this.timerMask.x -= stepWidth;
                 if(this.timeLeft == 0){
                     this.timeLeft = 60;
@@ -72,11 +77,22 @@ class MiniGame extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+        // Change alpha of a random rectangle in group1 every 5 seconds
+        this.time.addEvent({
+    
+            callback: function() {
+                const randomIndex = Phaser.Math.Between(0, this.group1.getLength() - 1);
+                const randomRectangle = this.group1.getChildren()[randomIndex];
+                randomRectangle.setAlpha(0.5);
+            },
+                callbackScope: this,
+                delay: 2000,
+                loop: true
+        });
     }
 
     update ()
     {
-        
         this.player.body.setVelocity(0);
         if (this.cursors.left.isDown)
         {
