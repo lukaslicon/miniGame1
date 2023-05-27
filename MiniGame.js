@@ -178,7 +178,7 @@ class MiniGame extends Phaser.Scene {
         
         //score
         this.add.text(100, 100, 'Score: ').setStyle({ fontSize: 50, color: '#fff' })
-        this.scorecount = this.add.text(300,105).setStyle({ fontSize: 50, color: '#fff' })
+        this.scoreCount = this.add.text(300,105).setStyle({ fontSize: 50, color: '#fff' })
 
 
         //reset to middle button
@@ -188,9 +188,11 @@ class MiniGame extends Phaser.Scene {
             this.player.y = 590;
         });
 
-        
-        // timer seconds
-        // timer bar
+
+
+
+        // timer bar        
+        this.add.image(game.config.width / 2, game.config.height / 8, "timerBarBackground"); //background bar
         let timer = this.add.sprite(game.config.width / 2, game.config.height / 8, "timerBar");
         this.timerMask = this.add.sprite(timer.x, timer.y, "timerBar");
         this.timerMask.visible = false;
@@ -213,10 +215,16 @@ class MiniGame extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+        
+        // timer seconds
+        this.add.text(720, 122, 'Time: ').setStyle({ fontSize: 25, color: '#fff' })
+        this.secondCount = this.add.text(795,122).setStyle({ fontSize: 25, color: '#fff' })
+
     }
 
     update(){
-        this.scorecount.setText(this.score);
+        this.scoreCount.setText(this.score);
+        this.secondCount.setText(this.timeLeft);
     }
 }
     
