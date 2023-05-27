@@ -11,27 +11,6 @@ class MiniGame extends Phaser.Scene {
     create()
     {
         this.timeLeft = gameOptions.initialTime;
-        //  player rectangle
-        this.player = this.physics.add.image(960, 590, 'bob').setScale(1.5);
-        this.player.body.setCollideWorldBounds(true); 
-
-        //  controls
-        this.add.text(100, 100, "Drag to move").setFontSize(30);
-        this.input.setDraggable(this.player.setInteractive());
-        this.input.on('dragstart', (pointer, obj) =>
-        {
-            obj.body.moves = false;
-        });
-
-        this.input.on('drag', (pointer, obj, dragX, dragY) =>
-        {
-            obj.setPosition(dragX, dragY);
-        });
-
-        this.input.on('dragend', (pointer, obj) =>
-        {
-            obj.body.moves = true;
-        });
 
         //  boundaries/goals
         this.group1 = this.physics.add.group({
@@ -72,6 +51,7 @@ class MiniGame extends Phaser.Scene {
             immovable: true
 
         });
+
         //outer rectangle placing
         Phaser.Actions.PlaceOnRectangle(
             this.group1.getChildren(), 
@@ -82,7 +62,7 @@ class MiniGame extends Phaser.Scene {
             this.group2.getChildren(), 
             new Phaser.Geom.Rectangle(0, 0, 1920, 1080)
             );
-
+        
         //line placements
         const topLine = new Phaser.Geom.Line(60, 0, 1980, 0);
         const bottomLine = new Phaser.Geom.Line(60, 1080, 1980, 1080);
@@ -107,6 +87,40 @@ class MiniGame extends Phaser.Scene {
                 rightLine
             );           
 
+
+        //  player rectangle
+        this.player = this.physics.add.image(960, 590, 'bob').setScale(3).setVelocity(400, 200).setBounce(1, 1);
+        this.player.body.setCollideWorldBounds(true); 
+
+        //  controls
+        this.add.text(100, 100, "Drag the square to the shaded ").setFontSize(30);
+        this.input.setDraggable(this.player.setInteractive());
+        this.input.on('dragstart', (pointer, obj) =>
+
+        {
+            obj.body.moves = false;
+        });
+
+        this.input.on('drag', (pointer, obj, dragX, dragY) =>
+        {
+            obj.setPosition(dragX, dragY);
+        });
+
+        this.input.on('dragend', (pointer, obj) =>
+        {
+            obj.body.moves = true;
+        });
+
+
+        // Set up invert on click effect
+        this.input.on('pointerdown', (pointer) => {
+            if (Phaser.Geom.Rectangle.Contains(this.player.getBounds(), pointer.x, pointer.y)) {
+                const velocityX = -(this.player.body.velocity.x); // Invert X velocity
+                const velocityY = -(this.player.body.velocity.y); // Invert Y velocity
+                this.player.setVelocity(velocityX, velocityY);
+                }
+        });
+
         //collisions for each group
         this.group1.getChildren().forEach(rectangle => {
             this.physics.add.collider(this.player, rectangle);
@@ -127,7 +141,6 @@ class MiniGame extends Phaser.Scene {
             this.physics.add.collider(this.player, rectangle);
         });           
         
-
 
         //  timer
         let timer = this.add.sprite(game.config.width / 2, game.config.height / 6, "timerBar");
