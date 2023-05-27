@@ -1,6 +1,6 @@
 
 playerVelocity = 2500;
-housing = 0;
+let housing = 0;
 
 class MiniGame extends Phaser.Scene {
     constructor() {
@@ -64,32 +64,16 @@ class MiniGame extends Phaser.Scene {
         Phaser.Actions.PlaceOnLine(this.rightSide.getChildren(),rightLine);           
 
         //  player rectangle
-        this.player = this.physics.add.image(960, 590, 'bob').setScale(1.5).setVelocity(400, 200).setBounce(1, 1);
+        this.player = this.physics.add.image(960, 590, 'bob').setScale(1.5).setVelocity(400, 200).setBounce(.6, .6);
         this.player.body.setCollideWorldBounds(true); 
-
-        //  Drag controls
-        this.add.text(100, 100, "Drag the square to the shaded ").setFontSize(30);
-        this.input.setDraggable(this.player.setInteractive());
-        this.input.on('dragstart', (pointer, obj) =>
-        {
-            obj.body.moves = false;
-        });
-        this.input.on('drag', (pointer, obj, dragX, dragY) =>
-        {
-            obj.setPosition(dragX, dragY);
-        });
-        this.input.on('dragend', (pointer, obj) =>
-        {
-            obj.body.moves = true;
-        });
 
         //invert on click effect
         this.input.on('pointerdown', (pointer) => {
             if (Phaser.Geom.Rectangle.Contains(this.player.getBounds(), pointer.x, pointer.y)) {
-                const velocityX = -(this.player.body.velocity.x); // Invert X velocity
-                const velocityY = -(this.player.body.velocity.y); // Invert Y velocity
+                const velocityX = Phaser.Math.Between(-playerVelocity, playerVelocity); // Random X velocity
+                const velocityY = Phaser.Math.Between(-playerVelocity, playerVelocity); // Random Y velocity
                 this.player.setVelocity(velocityX, velocityY);
-                }
+            }
         });
 
         //collisions for each group
@@ -157,25 +141,6 @@ class MiniGame extends Phaser.Scene {
             loop: true
         });
 
-            // Collision check for shaded rectangle
-            this.physics.add.collider(this.player, this.group1, this.checkCollision, null, this);
-
-
     }
-
-    checkCollision(player, rectangle) {
-        if (rectangle.isShaded) {
-            // Unshade the rectangle
-            this.housing++;
-                if(this.housing >= 1){
-                this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
-                    this.scene.start('intro')
-                })
-            }
-            rectangle.setAlpha(1);
-            rectangle.isShaded = false;
-            this.physics.world.enableBody(rectangle);
-        }
-    }
-
 }
+    
