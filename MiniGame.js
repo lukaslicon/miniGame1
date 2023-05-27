@@ -142,7 +142,7 @@ class MiniGame extends Phaser.Scene {
                 rectangle.destroy();  // Destroy the rectangle the player collided with
                 this.score++;  // Increment the score
 
-                if (this.score >= 20) {
+                if (this.score >= 15) {
                     // Fade in and start the intro scene
                     this.scene.start('intro', {}, { alpha: 0, duration: 1000 });
                 }
@@ -176,9 +176,18 @@ class MiniGame extends Phaser.Scene {
             this.physics.add.collider(this.player, rectangle);
         });           
         
+        //game info
+        let housingText = this.add.text(540, 500, 'Quick! Get in 15 housing apps!').setStyle({ fontSize: 50, color: '#fff' })
+        this.time.delayedCall(3000, () => {
+            this.tweens.add({
+                targets: housingText,
+                alpha: 0,
+                duration: 1000 // This is the duration of the fade out
+            });
+        }, [], this);
         //score
-        this.add.text(100, 100, 'Score: ').setStyle({ fontSize: 50, color: '#fff' })
-        this.scoreCount = this.add.text(300,105).setStyle({ fontSize: 50, color: '#fff' })
+        this.add.text(100, 122, 'Score: ').setStyle({ fontSize: 50, color: '#fff' })
+        this.scoreCount = this.add.text(300,126).setStyle({ fontSize: 50, color: '#fff' })
 
 
         //reset to middle button
