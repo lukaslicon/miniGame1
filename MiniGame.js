@@ -185,6 +185,15 @@ class MiniGame extends Phaser.Scene {
                 duration: 1000 // This is the duration of the fade out
             });
         }, [], this);
+
+        let HUD = this.add.text(590, 900, 'Click the player to move.').setStyle({ fontSize: 50, color: '#fff' })
+        this.time.delayedCall(5000, () => {
+            this.tweens.add({
+                targets: HUD,
+                alpha: 0,
+                duration: 1000 // This is the duration of the fade out
+            });
+        }, [], this);
         //score
         this.add.text(100, 122, 'Score: ').setStyle({ fontSize: 50, color: '#fff' })
         this.scoreCount = this.add.text(300,126).setStyle({ fontSize: 50, color: '#fff' })
