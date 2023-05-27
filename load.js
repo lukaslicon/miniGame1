@@ -13,6 +13,7 @@ class load extends Phaser.Scene {
         this.load.image("boarder", "boarder.png");
         this.load.image("side", "sideBoarder.png");
         this.load.image("background", "map.png");
+        this.load.image("reset", "reset.png");
 
     }
     create()

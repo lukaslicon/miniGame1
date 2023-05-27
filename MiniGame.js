@@ -12,31 +12,35 @@ class MiniGame extends Phaser.Scene {
     {
         this.add.image(960,540 , 'background');
         this.score = 0;
-        this.timeLeft = gameOptions.initialTime;
 
+        //  player rectangle
+        this.player = this.physics.add.image(960, 590, 'bob').setScale(1.5).setBounce(.6, .6);
+        this.player.body.setCollideWorldBounds(true); 
+        
+        this.timeLeft = gameOptions.initialTime;
 //boundaries/goals
         //top
         this.groupTop = this.physics.add.group({
             key: 'boundary',
-            frameQuantity: 6,
+            frameQuantity: 13,
             immovable: true
         });
         //bot
         this.groupBot = this.physics.add.group({
             key: 'boundary',
-            frameQuantity: 6,
+            frameQuantity: 13,
             immovable: true
         });
         //left
         this.groupLeft = this.physics.add.group({
             key: 'sideBoundary',
-            frameQuantity: 3,
+            frameQuantity: 4,
             immovable: true
         });
         //right
         this.groupRight = this.physics.add.group({
             key: 'sideBoundary',
-            frameQuantity: 3,
+            frameQuantity: 4,
             immovable: true
         });
 
@@ -44,42 +48,42 @@ class MiniGame extends Phaser.Scene {
         //bottom
         this.bottomSide = this.physics.add.group({
             key: 'boarder',
-            frameQuantity: 16,
+            frameQuantity: 14,
             immovable: true
 
         });
         //top
         this.topSide = this.physics.add.group({
             key: 'boarder',
-            frameQuantity: 16,
+            frameQuantity: 14,
             immovable: true
 
         });
         //left
         this.leftSide = this.physics.add.group({
             key: 'side',
-            frameQuantity: 9,
+            frameQuantity: 8,
             immovable: true
 
         });
         //right
         this.rightSide = this.physics.add.group({
             key: 'side',
-            frameQuantity: 9,
+            frameQuantity: 8,
             immovable: true
 
         });
 
         //line placements
-        const topLine = new Phaser.Geom.Line(60, 0, 1980, 0);
-        const bottomLine = new Phaser.Geom.Line(60, 1080, 1980, 1080);
-        const leftLine = new Phaser.Geom.Line(0, 60, 0, 1140);
-        const rightLine = new Phaser.Geom.Line(1920, 60, 1920, 1140);
+        const topLine = new Phaser.Geom.Line(80, 0, 1980, 0);
+        const bottomLine = new Phaser.Geom.Line(80, 1080, 1980, 1080);
+        const leftLine = new Phaser.Geom.Line(0, 40, 0, 1140);
+        const rightLine = new Phaser.Geom.Line(1920, 40, 1920, 1140);
         //house placements
-        const topSquare = new Phaser.Geom.Line(60, 0, 1980, 0);
-        const botSquare = new Phaser.Geom.Line(60, 1080, 1980, 1080);
-        const leftSquare = new Phaser.Geom.Line(0, 60, 0, 1140);
-        const rightSquare = new Phaser.Geom.Line(1920, 60, 1920, 1140);
+        const topSquare = new Phaser.Geom.Line(150, 0, 1910, 0);
+        const botSquare = new Phaser.Geom.Line(150, 1080, 1910, 1080);
+        const leftSquare = new Phaser.Geom.Line(0, 110, 0, 1210);
+        const rightSquare = new Phaser.Geom.Line(1920, 110, 1920, 1210);
 
 
 
@@ -94,9 +98,6 @@ class MiniGame extends Phaser.Scene {
         Phaser.Actions.PlaceOnLine(this.leftSide.getChildren(),leftLine);  
         Phaser.Actions.PlaceOnLine(this.rightSide.getChildren(),rightLine);           
 
-        //  player rectangle
-        this.player = this.physics.add.image(960, 590, 'bob').setScale(1.5).setVelocity(400, 200).setBounce(.6, .6);
-        this.player.body.setCollideWorldBounds(true); 
 
         //invert on click effect
         this.input.on('pointerdown', (pointer) => {
@@ -175,6 +176,20 @@ class MiniGame extends Phaser.Scene {
             this.physics.add.collider(this.player, rectangle);
         });           
         
+        //score
+        this.add.text(100, 100, 'Score: ').setStyle({ fontSize: 50, color: '#fff' })
+        this.scorecount = this.add.text(300,105).setStyle({ fontSize: 50, color: '#fff' })
+
+
+        //reset to middle button
+        let reset = this.add.image(37.5, 1042.5 , 'reset').setInteractive();
+        reset.on('pointerdown', () => {
+            this.player.x = 960;
+            this.player.y = 590;
+        });
+
+        
+        // timer seconds
         // timer bar
         let timer = this.add.sprite(game.config.width / 2, game.config.height / 8, "timerBar");
         this.timerMask = this.add.sprite(timer.x, timer.y, "timerBar");
@@ -198,6 +213,10 @@ class MiniGame extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+    }
+
+    update(){
+        this.scorecount.setText(this.score);
     }
 }
     
