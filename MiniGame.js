@@ -10,12 +10,29 @@ class MiniGame extends Phaser.Scene {
     }
     create()
     {
+        this.add.image(960,540 , 'background');
+        this.score = 0;
         this.timeLeft = gameOptions.initialTime;
 
         //  boundaries/goals
-        this.group1 = this.physics.add.group({
+        this.groupTop = this.physics.add.group({
             key: 'boundary',
-            frameQuantity: 50,
+            frameQuantity: 8,
+            immovable: true
+        });
+        this.groupBot = this.physics.add.group({
+            key: 'boundary',
+            frameQuantity: 8,
+            immovable: true
+        });
+        this.groupLeft = this.physics.add.group({
+            key: 'sideBoundary',
+            frameQuantity: 8,
+            immovable: true
+        });
+        this.groupRight = this.physics.add.group({
+            key: 'sideBoundary',
+            frameQuantity: 8,
             immovable: true
         });
 
@@ -49,16 +66,30 @@ class MiniGame extends Phaser.Scene {
         });
 
         //outer rectangle placing
-        Phaser.Actions.PlaceOnRectangle(this.group1.getChildren(), new Phaser.Geom.Rectangle(0, 0, 1920, 1080));
+        //Phaser.Actions.PlaceOnRectangle(this.group1.getChildren(), new Phaser.Geom.Rectangle(0, 0, 1920, 1080));
 
         //line placements
         const topLine = new Phaser.Geom.Line(60, 0, 1980, 0);
         const bottomLine = new Phaser.Geom.Line(60, 1080, 1980, 1080);
         const leftLine = new Phaser.Geom.Line(0, 60, 0, 1140);
         const rightLine = new Phaser.Geom.Line(1920, 60, 1920, 1140);
-        
+
+        //house placements
+        const topSquare = new Phaser.Geom.Line(60, 0, 1980, 0);
+        const botSquare = new Phaser.Geom.Line(60, 1080, 1980, 1080);
+        const leftSquare = new Phaser.Geom.Line(0, 60, 0, 1140);
+        const rightSquare = new Phaser.Geom.Line(1920, 60, 1920, 1140);
+
+        //place houses
+        Phaser.Actions.PlaceOnLine(this.groupTop.getChildren(),topSquare);
+        Phaser.Actions.PlaceOnLine(this.groupBot.getChildren(),botSquare);
+        Phaser.Actions.PlaceOnLine(this.groupLeft.getChildren(),leftSquare);
+        Phaser.Actions.PlaceOnLine(this.groupRight.getChildren(),rightSquare);
+
+
         //place lines
         Phaser.Actions.PlaceOnLine(this.topSide.getChildren(),topLine);
+
         Phaser.Actions.PlaceOnLine(this.bottomSide.getChildren(),bottomLine);   
         Phaser.Actions.PlaceOnLine(this.leftSide.getChildren(),leftLine);  
         Phaser.Actions.PlaceOnLine(this.rightSide.getChildren(),rightLine);           
@@ -75,10 +106,61 @@ class MiniGame extends Phaser.Scene {
                 this.player.setVelocity(velocityX, velocityY);
             }
         });
+//collisions for each group
+        //TOP COLLISIONS
+        this.groupTop.getChildren().forEach(rectangle => {
+            this.physics.add.collider(this.player, rectangle, (player, rectangle) => {
+                rectangle.destroy();  // Destroy the rectangle the player collided with
+                this.score++;  // Increment the score
 
-        //collisions for each group
-        this.group1.getChildren().forEach(rectangle => {
-            this.physics.add.collider(this.player, rectangle);
+                if (this.score >= 20) {
+                    // Fade in and start the intro scene
+                    this.scene.start('intro', {}, { alpha: 0, duration: 1000 });
+                }
+
+            }, null, this);
+        });             
+
+        //BOTTOM COLLISIONS
+        this.groupBot.getChildren().forEach(rectangle => {
+            this.physics.add.collider(this.player, rectangle, (player, rectangle) => {
+                rectangle.destroy();  // Destroy the rectangle the player collided with
+                this.score++;  // Increment the score
+
+                if (this.score >= 20) {
+                    // Fade in and start the intro scene
+                    this.scene.start('intro', {}, { alpha: 0, duration: 1000 });
+                }
+
+            }, null, this);
+        });             
+
+        //LEFT COLLISIONS
+        this.groupLeft.getChildren().forEach(rectangle => {
+            this.physics.add.collider(this.player, rectangle, (player, rectangle) => {
+                rectangle.destroy();  // Destroy the rectangle the player collided with
+                this.score++;  // Increment the score
+
+                if (this.score >= 20) {
+                    // Fade in and start the intro scene
+                    this.scene.start('intro', {}, { alpha: 0, duration: 1000 });
+                }
+
+            }, null, this);
+        });             
+        
+        //RIGHT COLLISIONS
+        this.groupRight.getChildren().forEach(rectangle => {
+            this.physics.add.collider(this.player, rectangle, (player, rectangle) => {
+                rectangle.destroy();  // Destroy the rectangle the player collided with
+                this.score++;  // Increment the score
+
+                if (this.score >= 20) {
+                    // Fade in and start the intro scene
+                    this.scene.start('intro', {}, { alpha: 0, duration: 1000 });
+                }
+
+            }, null, this);
         });             
         this.bottomSide.getChildren().forEach(rectangle => {
             this.physics.add.collider(this.player, rectangle);
@@ -93,7 +175,7 @@ class MiniGame extends Phaser.Scene {
             this.physics.add.collider(this.player, rectangle);
         });           
         
-        // timer
+        // timer bar
         let timer = this.add.sprite(game.config.width / 2, game.config.height / 6, "timerBar");
         this.timerMask = this.add.sprite(timer.x, timer.y, "timerBar");
         this.timerMask.visible = false;
@@ -116,31 +198,6 @@ class MiniGame extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-
-        // Change alpha of a random rectangle in group1 every 2 seconds
-        this.time.addEvent({
-            delay: 2000,
-            callback: function() {
-
-                if (this.shadedRectangle !== null) {
-                    this.shadedRectangle.setAlpha(1);
-                    this.shadedRectangle.isShaded = false;
-                    this.physics.world.enableBody(this.shadedRectangle);
-                }
-               // Choose a new rectangle to shade
-               let shadedRectangles = this.group1.getChildren().filter(rectangle => !rectangle.isShaded);
-               if(shadedRectangles.length > 0) {
-                   const randomIndex = Phaser.Math.Between(0, shadedRectangles.length - 1);
-                   this.shadedRectangle = shadedRectangles[randomIndex];
-                   this.shadedRectangle.setAlpha(0.5);
-                   this.shadedRectangle.isShaded = true;
-                   this.physics.world.disableBody(this.shadedRectangle);
-               }
-            },
-            callbackScope: this,
-            loop: true
-        });
-
     }
 }
     
