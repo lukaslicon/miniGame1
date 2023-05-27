@@ -156,7 +156,7 @@ class MiniGame extends Phaser.Scene {
                 rectangle.destroy();  // Destroy the rectangle the player collided with
                 this.score++;  // Increment the score
 
-                if (this.score >= 20) {
+                if (this.score >= 15) {
                     // Fade in and start the intro scene
                     this.scene.start('intro', {}, { alpha: 0, duration: 1000 });
                 }
