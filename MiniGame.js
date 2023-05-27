@@ -14,28 +14,33 @@ class MiniGame extends Phaser.Scene {
         this.score = 0;
         this.timeLeft = gameOptions.initialTime;
 
-        //  boundaries/goals
+//boundaries/goals
+        //top
         this.groupTop = this.physics.add.group({
             key: 'boundary',
-            frameQuantity: 8,
+            frameQuantity: 6,
             immovable: true
         });
+        //bot
         this.groupBot = this.physics.add.group({
             key: 'boundary',
-            frameQuantity: 8,
+            frameQuantity: 6,
             immovable: true
         });
+        //left
         this.groupLeft = this.physics.add.group({
             key: 'sideBoundary',
-            frameQuantity: 8,
+            frameQuantity: 3,
             immovable: true
         });
+        //right
         this.groupRight = this.physics.add.group({
             key: 'sideBoundary',
-            frameQuantity: 8,
+            frameQuantity: 3,
             immovable: true
         });
 
+//boarders
         //bottom
         this.bottomSide = this.physics.add.group({
             key: 'boarder',
@@ -65,31 +70,26 @@ class MiniGame extends Phaser.Scene {
 
         });
 
-        //outer rectangle placing
-        //Phaser.Actions.PlaceOnRectangle(this.group1.getChildren(), new Phaser.Geom.Rectangle(0, 0, 1920, 1080));
-
         //line placements
         const topLine = new Phaser.Geom.Line(60, 0, 1980, 0);
         const bottomLine = new Phaser.Geom.Line(60, 1080, 1980, 1080);
         const leftLine = new Phaser.Geom.Line(0, 60, 0, 1140);
         const rightLine = new Phaser.Geom.Line(1920, 60, 1920, 1140);
-
         //house placements
         const topSquare = new Phaser.Geom.Line(60, 0, 1980, 0);
         const botSquare = new Phaser.Geom.Line(60, 1080, 1980, 1080);
         const leftSquare = new Phaser.Geom.Line(0, 60, 0, 1140);
         const rightSquare = new Phaser.Geom.Line(1920, 60, 1920, 1140);
 
+
+
         //place houses
         Phaser.Actions.PlaceOnLine(this.groupTop.getChildren(),topSquare);
         Phaser.Actions.PlaceOnLine(this.groupBot.getChildren(),botSquare);
         Phaser.Actions.PlaceOnLine(this.groupLeft.getChildren(),leftSquare);
         Phaser.Actions.PlaceOnLine(this.groupRight.getChildren(),rightSquare);
-
-
         //place lines
         Phaser.Actions.PlaceOnLine(this.topSide.getChildren(),topLine);
-
         Phaser.Actions.PlaceOnLine(this.bottomSide.getChildren(),bottomLine);   
         Phaser.Actions.PlaceOnLine(this.leftSide.getChildren(),leftLine);  
         Phaser.Actions.PlaceOnLine(this.rightSide.getChildren(),rightLine);           
@@ -176,7 +176,7 @@ class MiniGame extends Phaser.Scene {
         });           
         
         // timer bar
-        let timer = this.add.sprite(game.config.width / 2, game.config.height / 6, "timerBar");
+        let timer = this.add.sprite(game.config.width / 2, game.config.height / 8, "timerBar");
         this.timerMask = this.add.sprite(timer.x, timer.y, "timerBar");
         this.timerMask.visible = false;
         timer.mask = new Phaser.Display.Masks.BitmapMask(this, this.timerMask);
