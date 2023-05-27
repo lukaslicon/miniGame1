@@ -1,6 +1,6 @@
 
 playerVelocity = 2500;
-
+housing = 0;
 
 class MiniGame extends Phaser.Scene {
     constructor() {
@@ -15,13 +15,23 @@ class MiniGame extends Phaser.Scene {
         this.player = this.physics.add.image(960, 590, 'bob').setScale(1.5);
         this.player.body.setCollideWorldBounds(true); 
 
-        //  keyboard input
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.cursors = this.input.keyboard.addKeys(
-            {up:Phaser.Input.Keyboard.KeyCodes.W,
-            down:Phaser.Input.Keyboard.KeyCodes.S,
-            left:Phaser.Input.Keyboard.KeyCodes.A,
-            right:Phaser.Input.Keyboard.KeyCodes.D});
+        //  controls
+        this.add.text(100, 100, "Drag to move").setFontSize(30);
+        this.input.setDraggable(this.player.setInteractive());
+        this.input.on('dragstart', (pointer, obj) =>
+        {
+            obj.body.moves = false;
+        });
+
+        this.input.on('drag', (pointer, obj, dragX, dragY) =>
+        {
+            obj.setPosition(dragX, dragY);
+        });
+
+        this.input.on('dragend', (pointer, obj) =>
+        {
+            obj.body.moves = true;
+        });
 
         //  boundaries/goals
         this.group1 = this.physics.add.group({
@@ -117,10 +127,7 @@ class MiniGame extends Phaser.Scene {
             this.physics.add.collider(this.player, rectangle);
         });           
         
-        //  controls
-        this.add.text(50, 50, "Movement:").setFontSize(30);
-        this.add.text(225, 35, "  W").setFontSize(25);
-        this.add.text(225, 65, "A S D").setFontSize(25);
+
 
         //  timer
         let timer = this.add.sprite(game.config.width / 2, game.config.height / 6, "timerBar");
@@ -145,9 +152,9 @@ class MiniGame extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-        // Change alpha of a random rectangle in group1 every 5 seconds
+        // Change alpha of a random rectangle in group1 every 2 seconds
         this.time.addEvent({
-            delay: 3000,
+            delay: 2000,
             callback: function() {
 
                 if (this.shadedRectangle !== null) {
@@ -177,44 +184,16 @@ class MiniGame extends Phaser.Scene {
 
     checkCollision(player, rectangle) {
         if (rectangle.isShaded) {
-            player.setPosition(960, 590); // Move player back to the middle
-            // Freeze player for 2 seconds
-            this.physics.pause();
-            setTimeout(() => {
-                this.physics.resume();
-            }, 2000);
-
             // Unshade the rectangle
+            this.housing++;
+                if(this.housing >= 1){
+                this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
+                    this.scene.start('intro')
+                })
+            }
             rectangle.setAlpha(1);
             rectangle.isShaded = false;
             this.physics.world.enableBody(rectangle);
-
-            this.timeLeft -= 5; // Increase by 5 seconds
-            let stepWidth = this.timerMask.displayWidth / gameOptions.initialTime;
-            this.timerMask.x -=  stepWidth * 5; // Increase the bar width
-        }
-    }
-
-    update ()
-    {
-        if (!this.playerFrozen) {
-            this.player.body.setVelocity(0);
-            if (this.cursors.left.isDown)
-            {
-                this.player.body.setVelocityX(-playerVelocity);
-            }
-            else if (this.cursors.right.isDown)
-            {
-                this.player.body.setVelocityX(playerVelocity);
-            }
-            if (this.cursors.up.isDown)
-            {
-                this.player.body.setVelocityY(-playerVelocity);
-            }
-            else if (this.cursors.down.isDown)
-            {
-                this.player.body.setVelocityY(playerVelocity);
-            }
         }
     }
 
