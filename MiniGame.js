@@ -18,11 +18,7 @@ class MiniGame extends Phaser.Scene {
             frameQuantity: 50,
             immovable: true
         });
-        //inside collision
-        this.group2 = this.physics.add.group({
-            key: 'bob',
-            frameQuantity: 50,
-        });
+
         //bottom
         this.bottomSide = this.physics.add.group({
             key: 'boarder',
@@ -53,16 +49,8 @@ class MiniGame extends Phaser.Scene {
         });
 
         //outer rectangle placing
-        Phaser.Actions.PlaceOnRectangle(
-            this.group1.getChildren(), 
-            new Phaser.Geom.Rectangle(0, 0, 1920, 1080)
-            );
-        //inside collision placing
-        Phaser.Actions.PlaceOnRectangle(
-            this.group2.getChildren(), 
-            new Phaser.Geom.Rectangle(0, 0, 1920, 1080)
-            );
-        
+        Phaser.Actions.PlaceOnRectangle(this.group1.getChildren(), new Phaser.Geom.Rectangle(0, 0, 1920, 1080));
+
         //line placements
         const topLine = new Phaser.Geom.Line(60, 0, 1980, 0);
         const bottomLine = new Phaser.Geom.Line(60, 1080, 1980, 1080);
@@ -70,49 +58,32 @@ class MiniGame extends Phaser.Scene {
         const rightLine = new Phaser.Geom.Line(1920, 60, 1920, 1140);
         
         //place lines
-        Phaser.Actions.PlaceOnLine(
-                this.topSide.getChildren(),
-                topLine
-            );
-        Phaser.Actions.PlaceOnLine(
-                this.bottomSide.getChildren(),
-                bottomLine
-            );   
-        Phaser.Actions.PlaceOnLine(
-                this.leftSide.getChildren(),
-                leftLine
-            );  
-        Phaser.Actions.PlaceOnLine(
-                this.rightSide.getChildren(),
-                rightLine
-            );           
-
+        Phaser.Actions.PlaceOnLine(this.topSide.getChildren(),topLine);
+        Phaser.Actions.PlaceOnLine(this.bottomSide.getChildren(),bottomLine);   
+        Phaser.Actions.PlaceOnLine(this.leftSide.getChildren(),leftLine);  
+        Phaser.Actions.PlaceOnLine(this.rightSide.getChildren(),rightLine);           
 
         //  player rectangle
-        this.player = this.physics.add.image(960, 590, 'bob').setScale(3).setVelocity(400, 200).setBounce(1, 1);
+        this.player = this.physics.add.image(960, 590, 'bob').setScale(1.5).setVelocity(400, 200).setBounce(1, 1);
         this.player.body.setCollideWorldBounds(true); 
 
-        //  controls
+        //  Drag controls
         this.add.text(100, 100, "Drag the square to the shaded ").setFontSize(30);
         this.input.setDraggable(this.player.setInteractive());
         this.input.on('dragstart', (pointer, obj) =>
-
         {
             obj.body.moves = false;
         });
-
         this.input.on('drag', (pointer, obj, dragX, dragY) =>
         {
             obj.setPosition(dragX, dragY);
         });
-
         this.input.on('dragend', (pointer, obj) =>
         {
             obj.body.moves = true;
         });
 
-
-        // Set up invert on click effect
+        //invert on click effect
         this.input.on('pointerdown', (pointer) => {
             if (Phaser.Geom.Rectangle.Contains(this.player.getBounds(), pointer.x, pointer.y)) {
                 const velocityX = -(this.player.body.velocity.x); // Invert X velocity
@@ -124,10 +95,7 @@ class MiniGame extends Phaser.Scene {
         //collisions for each group
         this.group1.getChildren().forEach(rectangle => {
             this.physics.add.collider(this.player, rectangle);
-        });       
-        this.group2.getChildren().forEach(rectangle => {
-            this.physics.add.collider(this.player, rectangle);
-        });        
+        });             
         this.bottomSide.getChildren().forEach(rectangle => {
             this.physics.add.collider(this.player, rectangle);
         });       
@@ -141,8 +109,7 @@ class MiniGame extends Phaser.Scene {
             this.physics.add.collider(this.player, rectangle);
         });           
         
-
-        //  timer
+        // timer
         let timer = this.add.sprite(game.config.width / 2, game.config.height / 6, "timerBar");
         this.timerMask = this.add.sprite(timer.x, timer.y, "timerBar");
         this.timerMask.visible = false;
@@ -165,6 +132,7 @@ class MiniGame extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+
         // Change alpha of a random rectangle in group1 every 2 seconds
         this.time.addEvent({
             delay: 2000,
